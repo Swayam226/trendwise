@@ -12,7 +12,7 @@ export default function CommentSection({ slug }) {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const res = await fetch(`/api/comment?slug=${slug}`);
+                const res = await fetch(`/api/comments?slug=${slug}`);
                 if (!res.ok) {
                     console.error("Failed to fetch comments");
                     return;
@@ -31,7 +31,7 @@ export default function CommentSection({ slug }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch("/api/comment", {
+            const res = await fetch("/api/comments", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -84,7 +84,7 @@ export default function CommentSection({ slug }) {
             <div className="space-y-2">
                 {comments.length === 0 && <p className="text-gray-500 italic">No comments yet.</p>}
                 {comments.map(comment => (
-                    <div key={comment.id} className="border rounded p-2">
+                    <div key={comment._id} className="border rounded p-2">
                         <p className="font-semibold">{comment.author}</p>
                         <p className="text-gray-600">{comment.content}</p>
                         <p className="text-xs text-gray-400">{new Date(comment.createdAt).toLocaleString()}</p>
