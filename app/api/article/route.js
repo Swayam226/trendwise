@@ -1,11 +1,15 @@
+import { connectDB } from "@/lib/db";
+import { Article } from "@/models/article";
+
 export async function GET() {
-    return Response.json([
-        { id: 1, title: "Placeholder Article 1", slug: "placeholder-article-1" },
-        { id: 2, title: "Placeholder Article 2", slug: "placeholder-article-2" },
-    ]);
+    await connectDB();
+    const articles = await Article.find();
+    return Response.json(articles);
 }
 
 export async function POST(request) {
-    const data = await request.json();
-    return Response.json({ message: "Article created", data });
+    await connectDB();
+    const body = await request.json();
+    const newArticle = await Article.create(body);
+    return Response.json(newArticle);
 }

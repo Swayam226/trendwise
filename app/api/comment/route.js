@@ -1,21 +1,28 @@
-let comments = [];  // Temporary in-memory store for now
+import { connectDB } from "@/lib/db";
+import { Comment } from "@/models/comment";
 
-export async function GET() {
-    return Response.json(comments);
+
+export async function GET(request) {
+    await connectDB();
+    const url = new URL(request.url);
+    const slug = url.searchParams.get('slug');
+
+    if (!slug) {
+        return Response.json([], { status: 200 });
+    }
+
+    const comments = await Comment.find({ slug });
+    return Response.json(comments, { status: 200 });
 }
 
 export async function POST(request) {
-    const { slug, author, content } = await request.json();
+    await connectDB();
+    const body = await request.json();
 
-    const newComment = {
-        id: Date.now(),
-        slug,
-        author,
-        content,
-        createdAt: new Date().toISOString(),
-    };
+    if (!body.slug || !body.content || !body.author) {
+        return Response.json({ error: "Invalid request" }, { status: 400 });
+    }
 
-    comments.push(newComment);
-
-    return Response.json(newComment);
+    const newComment = await Comment.create(body);
+    return Response.json(newComment, { status: 201 });
 }

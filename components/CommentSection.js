@@ -11,32 +11,49 @@ export default function CommentSection({ slug }) {
     // Fetch existing comments
     useEffect(() => {
         const fetchComments = async () => {
-            const res = await fetch("/api/comment");
-            const data = await res.json();
-            const filtered = data.filter(comment => comment.slug === slug);
-            setComments(filtered);
+            try {
+                const res = await fetch(`/api/comment?slug=${slug}`);
+                if (!res.ok) {
+                    console.error("Failed to fetch comments");
+                    return;
+                }
+                const data = await res.json();
+                setComments(data);
+            } catch (error) {
+                console.error("Error loading comments:", error);
+            }
         };
         fetchComments();
     }, [slug]);
 
+
     // Handle posting a comment
     const handleSubmit = async (e) => {
         e.preventDefault();
+        try {
+            const res = await fetch("/api/comment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    slug,
+                    author: session.user.name,
+                    content: newComment,
+                }),
+            });
 
-        const res = await fetch("/api/comment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                slug,
-                author: session.user.name,
-                content: newComment,
-            }),
-        });
+            if (!res.ok) {
+                console.error("Failed to post comment");
+                return;
+            }
 
-        const newEntry = await res.json();
-        setComments(prev => [...prev, newEntry]);
-        setNewComment("");
+            const newEntry = await res.json();
+            setComments(prev => [...prev, newEntry]);
+            setNewComment("");
+        } catch (error) {
+            console.error("Error posting comment:", error);
+        }
     };
+
 
     if (!session) {
         return (
