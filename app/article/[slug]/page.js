@@ -30,7 +30,7 @@ export default async function ArticleDetailPage({ params }) {
         return (
             <main className="max-w-2xl mx-auto py-10 px-4 text-center">
                 <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
-                <p className="text-gray-600">The article you're looking for doesn’t exist.</p>
+                <p className="text-gray-600">The article you&apos;re looking for doesn&apos;t exist.</p>
             </main>
         );
     }
