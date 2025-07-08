@@ -1,9 +1,12 @@
 "use client";
 
+import { useSession, signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { Pencil, Trash2, X } from "lucide-react";
 
 export default function AdminPage() {
+    const { data: session, status } = useSession();
+
     const [topic, setTopic] = useState("");
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
@@ -13,18 +16,19 @@ export default function AdminPage() {
     const [editingArticle, setEditingArticle] = useState(null);
 
     useEffect(() => {
-        const fetchArticles = async () => {
-            try {
-                const res = await fetch(`/api/articles?search=${encodeURIComponent(search)}`);
-                const data = await res.json();
-                setArticles(data);
-            } catch (err) {
-                console.error("Failed to load articles:", err);
-            }
-        };
-
-        fetchArticles();
-    }, [search]);
+        if (session) {
+            const fetchArticles = async () => {
+                try {
+                    const res = await fetch(`/api/articles?search=${encodeURIComponent(search)}`);
+                    const data = await res.json();
+                    setArticles(data);
+                } catch (err) {
+                    console.error("Failed to load articles:", err);
+                }
+            };
+            fetchArticles();
+        }
+    }, [search, session]);
 
     const handleGenerate = async () => {
         if (!topic.trim()) {
@@ -68,7 +72,7 @@ export default function AdminPage() {
         try {
             const res = await fetch(`/api/articles/${id}`, { method: "DELETE" });
             if (res.ok) {
-                setArticles(articles.filter(article => article._id !== id));
+                setArticles(prev => prev.filter(article => article._id !== id));
             } else {
                 alert("Failed to delete article.");
             }
@@ -91,9 +95,7 @@ export default function AdminPage() {
 
             if (res.ok) {
                 const updated = await res.json();
-                setArticles(prev =>
-                    prev.map(a => (a._id === updated._id ? updated : a))
-                );
+                setArticles(prev => prev.map(a => (a._id === updated._id ? updated : a)));
                 setEditingArticle(null);
             } else {
                 alert("Failed to update article.");
@@ -103,6 +105,26 @@ export default function AdminPage() {
             alert("Something went wrong.");
         }
     };
+
+    if (status === "loading") {
+        return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    }
+
+    if (!session) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-center">
+                    <h2 className="text-xl font-semibold mb-4">Access Denied</h2>
+                    <button
+                        onClick={() => signIn("google")}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                    >
+                        Sign in with Google
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <main className="max-w-3xl mx-auto py-10 px-4">
