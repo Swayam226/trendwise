@@ -1,36 +1,38 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function NavBar() {
     const { data: session } = useSession();
 
     return (
-        <nav className="flex items-center justify-between p-4 border-b border-gray-200">
-            <Link href="/" className="text-xl font-bold text-blue-600">
-                TrendWise
-            </Link>
+        <nav className="bg-[#1c1c1e] border-b border-[#2a2a2a] shadow-sm">
+            <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
 
-            <div className="flex items-center gap-4">
-                {session ? (
-                    <>
-                        <span className="hidden sm:block text-gray-700">Hi, {session.user.name.split(" ")[0]}</span>
-                        <button
-                            onClick={() => signOut()}
-                            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                        >
+                {/* ✅ Fix: Static consistent logo text */}
+                <Link href="/" className="text-2xl font-semibold text-white tracking-tight">
+                    <span>Trend</span><span className="text-blue-500">Wise</span>
+                </Link>
+
+
+                {/* Links */}
+                <div className="flex items-center space-x-6 text-sm">
+                    <Link href="/" className="text-[#f1f1f1] hover:text-blue-400">Home</Link>
+                    <Link href="/articles" className="text-[#f1f1f1] hover:text-blue-400">Articles</Link>
+                    <Link href="/admin" className="text-[#f1f1f1] hover:text-blue-400">Admin</Link>
+
+                    {session ? (
+                        <button onClick={() => signOut()} className="text-[#f1f1f1] hover:text-red-500">
                             Logout
                         </button>
-                    </>
-                ) : (
-                    <button
-                        onClick={() => signIn("google")}
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                    >
-                        Login
-                    </button>
-                )}
+                    ) : (
+                        <button onClick={() => signIn("google")} className="text-[#f1f1f1] hover:text-blue-400">
+                            Login
+                        </button>
+                    )}
+                </div>
+
             </div>
         </nav>
     );

@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { Article } from "@/models/ArticleModel";
+import CommentSection from "@/components/CommentSection";
 
 export const dynamic = "force-dynamic";
 
@@ -37,9 +38,9 @@ export default async function ArticleDetailPage({ params }) {
     return (
         <main className="max-w-3xl mx-auto py-10 px-4">
             <h1 className="text-3xl font-bold mb-4">{article.title}</h1>
-            <p className="text-gray-600 text-sm mb-6">{article.meta}</p>
+            <p className="text-gray-500 text-sm mb-6">{article.meta}</p>
 
-            <article className="prose prose-lg">
+            <article className="prose prose-invert max-w-none mb-10">
                 {article.content
                     .split("\n")
                     .filter(line => line.trim() !== "")
@@ -47,6 +48,8 @@ export default async function ArticleDetailPage({ params }) {
                         <p key={index}>{line}</p>
                     ))}
             </article>
+
+            <CommentSection slug={slug} />
         </main>
     );
 }
