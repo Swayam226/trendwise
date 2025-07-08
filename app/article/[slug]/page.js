@@ -3,11 +3,26 @@ import { Article } from "@/models/ArticleModel";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }) {
+    await connectDB();
+    const article = await Article.findOne({ slug: params.slug });
+
+    if (!article) {
+        return {
+            title: "Article Not Found – TrendWise",
+            description: "The article you’re looking for does not exist.",
+        };
+    }
+
+    return {
+        title: `${article.title} – TrendWise`,
+        description: article.meta,
+    };
+}
+
 export default async function ArticleDetailPage({ params }) {
     const { slug } = params;
-
     await connectDB();
-
     const article = await Article.findOne({ slug });
 
     if (!article) {
