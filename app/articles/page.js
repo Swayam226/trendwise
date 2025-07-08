@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export default async function ArticlesPage({ searchParams }) {
     const search = searchParams?.search || "";
     const page = parseInt(searchParams?.page || "1");
-    const limit = 5;  // articles per page
+    const limit = 5;
     const skip = (page - 1) * limit;
 
     await connectDB();
@@ -24,32 +24,42 @@ export default async function ArticlesPage({ searchParams }) {
     const totalPages = Math.ceil(totalArticles / limit);
 
     return (
-        <main className="max-w-3xl mx-auto py-10 px-4">
-            <h1 className="text-3xl font-bold mb-6">📰 All Articles</h1>
+        <main className="max-w-5xl mx-auto py-10 px-4">
+            <h1 className="text-3xl font-bold mb-8">All Articles</h1>
 
-            <form method="get" className="mb-6">
+            <form method="get" className="mb-8">
                 <input
                     type="text"
                     name="search"
                     defaultValue={search}
                     placeholder="Search articles..."
-                    className="border rounded p-2 w-full"
+                    className="border border-[#2a2a2a] bg-[#1f1f1f] text-[#f1f1f1] rounded-lg p-3 w-full focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
-                <button type="submit" className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                <button
+                    type="submit"
+                    className="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg w-full"
+                >
                     Search
                 </button>
             </form>
 
-            {articles.length === 0 && <p>No articles found.</p>}
+            {articles.length === 0 && (
+                <p className="text-gray-500 text-center">No articles found.</p>
+            )}
 
-            <ul className="space-y-4">
+            <ul className="grid gap-5">
                 {articles.map(article => (
-                    <li key={article._id} className="border rounded p-4">
-                        <h2 className="text-xl font-semibold">{article.title}</h2>
-                        <p className="text-gray-500 text-sm mb-2">{article.meta}</p>
+                    <li
+                        key={article._id}
+                        className="bg-[#1f1f1f] rounded-2xl p-5 shadow-md border border-[#2a2a2a] hover:border-blue-500 transition"
+                    >
+                        <h2 className="text-lg font-semibold text-[#f1f1f1] mb-1">{article.title}</h2>
+                        <p className="text-sm text-gray-400 mb-2">
+                            {article.meta.length > 100 ? `${article.meta.slice(0, 100)}...` : article.meta}
+                        </p>
                         <a
                             href={`/article/${article.slug}`}
-                            className="text-blue-600 hover:underline"
+                            className="text-blue-500 hover:text-blue-400 text-sm"
                         >
                             Read More →
                         </a>
@@ -57,14 +67,16 @@ export default async function ArticlesPage({ searchParams }) {
                 ))}
             </ul>
 
-            {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-center mt-8 space-x-2">
+                <div className="flex items-center justify-center mt-10 space-x-2">
                     {Array.from({ length: totalPages }, (_, i) => (
                         <a
                             key={i}
                             href={`/articles?page=${i + 1}${search ? `&search=${search}` : ""}`}
-                            className={`px-3 py-1 rounded ${i + 1 === page ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800 hover:bg-gray-300"}`}
+                            className={`px-3 py-1 rounded-lg text-sm ${i + 1 === page
+                                ? "bg-blue-600 text-white"
+                                : "bg-[#2a2a2a] text-gray-300 hover:bg-[#3a3a3a]"
+                                }`}
                         >
                             {i + 1}
                         </a>
