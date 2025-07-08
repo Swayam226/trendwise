@@ -2,6 +2,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import NavBar from "@/components/NavBar";
 import { Inter, Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 
 // Fonts
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500"] });
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
         <Providers>
           <NavBar />
           <main className="min-h-screen">{children}</main>
+          <Analytics />
         </Providers>
       </body>
     </html>
