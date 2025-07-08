@@ -1,7 +1,8 @@
 "use client";
-
+import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useDebounce } from "use-debounce";
 import { Pencil, Trash2, X } from "lucide-react";
 
 export default function AdminPage() {
@@ -12,6 +13,7 @@ export default function AdminPage() {
     const [result, setResult] = useState(null);
     const [error, setError] = useState("");
     const [search, setSearch] = useState("");
+    const [debouncedSearch] = useDebounce(search, 500);
     const [articles, setArticles] = useState([]);
     const [editingArticle, setEditingArticle] = useState(null);
 
@@ -19,7 +21,7 @@ export default function AdminPage() {
         if (session) {
             const fetchArticles = async () => {
                 try {
-                    const res = await fetch(`/api/articles?search=${encodeURIComponent(search)}`);
+                    const res = await fetch(`/api/articles?search=${encodeURIComponent(debouncedSearch)}`);
                     const data = await res.json();
                     setArticles(data);
                 } catch (err) {
@@ -28,7 +30,7 @@ export default function AdminPage() {
             };
             fetchArticles();
         }
-    }, [search, session]);
+    }, [debouncedSearch, session]);
 
     const handleGenerate = async () => {
         if (!topic.trim()) {
@@ -97,7 +99,6 @@ export default function AdminPage() {
                 const updated = await res.json();
                 setArticles(prev => prev.map(a => (a._id === updated._id ? updated : a)));
                 setEditingArticle(null);
-                window.location.reload();
             } else {
                 alert("Failed to update article.");
             }
@@ -175,7 +176,9 @@ export default function AdminPage() {
                         <h3 className="text-base font-semibold text-white mb-1">{article.title}</h3>
                         <p className="text-sm text-gray-400 mb-2">{article.meta.length > 100 ? `${article.meta.slice(0, 100)}...` : article.meta}</p>
                         <div className="flex items-center justify-between mt-2">
-                            <a href={`/article/${article.slug}`} className="text-blue-500 hover:text-blue-400 text-sm">View →</a>
+                            <Link href={`/article/${article.slug}`} prefetch={false} className="text-blue-500 hover:text-blue-400 text-sm">
+                                View →
+                            </Link>
                             <div className="flex space-x-3">
                                 <button onClick={() => setEditingArticle(article)}>
                                     <Pencil size={18} className="text-gray-400 hover:text-blue-500" />

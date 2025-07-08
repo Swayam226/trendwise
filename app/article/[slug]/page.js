@@ -1,6 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { Article } from "@/models/ArticleModel";
-import CommentSection from "@/components/CommentSection";
+import CommentSection from "@/components/CommentSection";  // ✅ Make sure this path is correct!
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +49,7 @@ export default async function ArticleDetailPage({ params }) {
                     ))}
             </article>
 
+            {/* ✅ COMMENTS ADDED BACK */}
             <CommentSection slug={slug} />
         </main>
     );

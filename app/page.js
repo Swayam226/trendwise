@@ -1,4 +1,3 @@
-// 🔥 Updated Landing Page with Limited Text Previews
 
 import { connectDB } from "@/lib/db";
 import { Article } from "@/models/ArticleModel";
