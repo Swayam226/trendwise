@@ -1,5 +1,5 @@
 import { connectDB } from "@/lib/db";
-import { Comment } from "@/models/comment";
+import { Comment } from "@/models/Comment";
 
 
 export async function GET(request) {
